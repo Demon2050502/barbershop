@@ -1,0 +1,379 @@
+/* Общие стили */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+  line-height: 1.6;
+  color: #333;
+  background-color: #f9f9f9;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Шапка */
+header {
+  background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+  color: white;
+  padding: 2rem 0;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Основной контент */
+.about {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.about h2 {
+  color: #6e48aa;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+.services {
+  margin: 2rem 0;
+}
+
+.services h3,
+.advantages h3 {
+  color: #6e48aa;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.services ul {
+  list-style-position: inside;
+  margin-left: 1rem;
+}
+
+.services li {
+  margin-bottom: 0.5rem;
+}
+
+.advantages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.advantage-item {
+  background: #f0e6ff;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.advantage-item h4 {
+  color: #6e48aa;
+  margin-bottom: 0.5rem;
+}
+
+/* Стили для секции мастеров */
+.masters {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.masters h2 {
+  color: #6e48aa;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+.masters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.master-card {
+  background: #f9f5ff;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.master-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.master-photo {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.master-info {
+  padding: 1.5rem;
+}
+
+.master-info h3 {
+  color: #6e48aa;
+  margin-bottom: 0.5rem;
+}
+
+.specialization {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.experience {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+}
+
+.stars {
+  color: #ffc107;
+  margin-right: 0.5rem;
+}
+
+.rating-value {
+  font-weight: bold;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .masters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .master-photo {
+    height: 200px;
+  }
+}
+
+/* Блок записи */
+.booking {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.booking h2 {
+  color: #6e48aa;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+/* Навигация по неделям */
+.week-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.week-days {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.day-tab {
+  padding: 0.5rem 1rem;
+  margin: 0 0.3rem;
+  cursor: pointer;
+  border-radius: 4px;
+  background: #f0e6ff;
+  transition: all 0.3s;
+}
+
+.day-tab.active {
+  background: #6e48aa;
+  color: white;
+}
+
+.week-nav-btn {
+  background: #6e48aa;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.week-nav-btn:hover {
+  background: #9d50bb;
+}
+
+/* Адаптивность для дней недели */
+@media (max-width: 768px) {
+  .week-navigation {
+    flex-direction: column;
+  }
+
+  .week-days {
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+  }
+
+  .day-tab {
+    margin: 0.2rem;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .week-nav-btn {
+    margin: 0.5rem 0;
+  }
+}
+
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.time-slot {
+  background: #6e48aa;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.time-slot:hover {
+  background: #9d50bb;
+  transform: translateY(-3px);
+}
+
+.time-slot.booked {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Модальное окно */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #333;
+}
+
+/* Форма */
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.btn {
+  background: #6e48aa;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.3s;
+  width: 100%;
+}
+
+.btn:hover {
+  background: #9d50bb;
+}
+
+/* Подвал */
+footer {
+  background: #333;
+  color: white;
+  text-align: center;
+  padding: 1.5rem 0;
+  margin-top: 2rem;
+}
+
+footer p {
+  margin-bottom: 0.5rem;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .time-slots-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+}
