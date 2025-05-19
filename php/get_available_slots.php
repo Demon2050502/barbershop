@@ -32,9 +32,6 @@ try {
     $stmt->execute([$date, $master_id]);
     $slots = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Логируем результат запроса
-    error_log("Found slots: " . print_r($slots, true));
-
     echo json_encode([
         'success' => true,
         'date' => $date,

@@ -1,22 +1,14 @@
 <?php
 header('Content-Type: application/json');
 
-// Убедимся, что нет никакого вывода перед заголовками
-if (ob_get_level()) ob_end_clean();
-
 // Проверяем метод запроса
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     die(json_encode(['success' => false, 'message' => 'Метод не разрешен']));
 }
 
-// Подключаемся к базе данных
 require_once 'db_connect.php';
 
-// Проверяем соединение с БД
-if (!isset($conn)) {
-    die(json_encode(['success' => false, 'message' => 'Ошибка подключения к базе данных']));
-}
 
 try {
     // Получаем входные данные

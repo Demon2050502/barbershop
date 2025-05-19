@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Панель мастера - Просмотр записей</title>
+    <link rel="stylesheet" href="style/masters_page.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Панель мастера - Просмотр записей</h1>
+
+      <div class="filter-section">
+        <select id="master-select">
+          <option value="">Все мастера</option>
+        </select>
+
+        <input type="date" id="date-filter" />
+
+        <button id="refresh-btn">Обновить</button>
+      </div>
+
+      <div id="bookings-container">
+        <table id="bookings-table">
+          <thead>
+            <tr>
+              <th>Дата</th>
+              <th>Время</th>
+              <th>Мастер</th>
+              <th>Клиент</th>
+              <th>Телефон</th>
+              <th>Услуга</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-body">
+            <!-- Записи будут загружаться здесь -->
+          </tbody>
+        </table>
+        <div id="no-bookings" class="no-bookings" style="display: none">
+          Нет записанных клиентов на выбранную дату
+        </div>
+      </div>
+    </div>
+
+    <script src="js/masters_page.js"></script>
+  </body>
+</html>
