@@ -8,8 +8,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const weekDaysContainer = document.getElementById("week-days");
   const prevWeekBtn = document.getElementById("prev-week");
   const nextWeekBtn = document.getElementById("next-week");
-  const mastersContainer = document.querySelector(".masters-grid");
+  const mastersContainer = document.getElementById("master-select");
   const selectedTimeDisplay = document.getElementById("selected-time-display");
+  const serviceSelect = document.getElementById("service-select");
+  const categorySelect = document.getElementById("category-select");
 
   // Состояние приложения
   let currentWeekStart = getStartOfWeek(new Date());
@@ -17,6 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let selectedMasterId = null;
   let isLoading = false;
   let masters = [];
+  let categories = [];
+  let services = [];
 
   // Вспомогательные функции
   function showAlert(message, type = "info") {
@@ -62,21 +66,68 @@ document.addEventListener("DOMContentLoaded", function () {
     return new Date(d.setDate(diff));
   }
 
+  function isPastDate(date) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  }
+
   // Функции работы с данными
-  async function loadMasters() {
+  async function loadCategories() {
     try {
-      const response = await fetch("php/get_masters.php");
+      const response = await fetch("php/get_categories.php");
+      const data = await response.json();
+
+      if (data.success) {
+        categories = data.categories;
+        renderCategorySelect();
+      } else {
+        throw new Error(data.message || "Ошибка загрузки категорий");
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки категорий:", error);
+      showAlert("Не удалось загрузить список категорий", "error");
+    }
+  }
+
+  async function loadMasters(categoryId = null) {
+    try {
+      let url = "php/get_masters.php";
+      if (categoryId) {
+        url += `?category_id=${categoryId}`;
+      }
+
+      const response = await fetch(url);
       const data = await response.json();
 
       if (data.success) {
         masters = data.masters;
-        renderMasters();
+        renderMasterSelect();
       } else {
         throw new Error(data.message || "Ошибка загрузки мастеров");
       }
     } catch (error) {
       console.error("Ошибка загрузки мастеров:", error);
       showAlert("Не удалось загрузить список мастеров", "error");
+    }
+  }
+
+  async function loadServices(categoryId) {
+    try {
+      const response = await fetch(
+        `php/get_services.php?category_id=${categoryId}`
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        services = data.services;
+        renderServiceSelect();
+      } else {
+        throw new Error(data.message || "Ошибка загрузки услуг");
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки услуг:", error);
+      showAlert("Не удалось загрузить список услуг", "error");
     }
   }
 
@@ -102,7 +153,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       renderTimeSlots(data.slots);
-      console.log(data.slots);
     } catch (error) {
       console.error("Ошибка:", error);
       timeSlotsContainer.innerHTML = `<p class='error-message'>Ошибка: ${error.message}</p>`;
@@ -152,105 +202,64 @@ document.addEventListener("DOMContentLoaded", function () {
         dayElement.classList.add("active");
       }
 
+      if (isPastDate(date)) {
+        dayElement.classList.add("past-date");
+      }
+
       dayElement.textContent = formatDayDate(date);
       dayElement.dataset.date = formatDate(date);
 
-      dayElement.addEventListener("click", function () {
-        selectedDate = date;
-        document.querySelectorAll(".day-tab").forEach((tab) => {
-          tab.classList.remove("active");
+      if (!isPastDate(date)) {
+        dayElement.addEventListener("click", function () {
+          selectedDate = date;
+          document.querySelectorAll(".day-tab").forEach((tab) => {
+            tab.classList.remove("active");
+          });
+          this.classList.add("active");
+          if (selectedMasterId) {
+            loadAvailableSlots(this.dataset.date);
+          }
         });
-        this.classList.add("active");
-        if (selectedMasterId) {
-          loadAvailableSlots(this.dataset.date);
-        }
-      });
+      }
 
       weekDaysContainer.appendChild(dayElement);
     }
   }
 
-  function renderMasters() {
-    mastersContainer.innerHTML = "";
+  function renderCategorySelect() {
+    categorySelect.innerHTML = '<option value="">Выберите категорию</option>';
 
-    if (masters.length === 0) {
-      mastersContainer.innerHTML =
-        "<p class='info-message'>Мастера не найдены</p>";
-      return;
-    }
+    categories.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category.id;
+      option.textContent = category.name;
+      categorySelect.appendChild(option);
+    });
+  }
+
+  function renderMasterSelect() {
+    mastersContainer.innerHTML = '<option value="">Выберите мастера</option>';
 
     masters.forEach((master) => {
-      const masterCard = document.createElement("div");
-      masterCard.className = "master-card";
-      masterCard.dataset.masterId = master.id;
-
-      // Проверяем и форматируем рейтинг
-      let rating = parseFloat(master.rating);
-      if (isNaN(rating)) {
-        rating = 0; // Значение по умолчанию, если рейтинг не число
-      }
-      const ratingFixed = rating.toFixed ? rating.toFixed(1) : rating;
-
-      // Проверяем и устанавливаем фото мастера
-      const masterPhoto = master.photo || "images/default-master.jpg";
-
-      masterCard.innerHTML = `
-      <img src="${masterPhoto}" alt="${
-        master.name || "Мастер"
-      }" class="master-photo">
-      <div class="master-info">
-        <h3>${master.name || "Имя не указано"}</h3>
-        <p class="specialization">${
-          master.specialization || "Специализация не указана"
-        }</p>
-        <p class="experience">Опыт: ${master.experience || "0"} лет</p>
-        <div class="rating">
-          <span class="stars">${"★".repeat(Math.floor(rating))}${"☆".repeat(
-        5 - Math.floor(rating)
-      )}</span>
-          <span class="rating-value">${ratingFixed}</span>
-        </div>
-      </div>
-    `;
-
-      mastersContainer.appendChild(masterCard);
+      const option = document.createElement("option");
+      option.value = master.id;
+      option.textContent = `${master.name} (${master.specialization})`;
+      mastersContainer.appendChild(option);
     });
+  }
 
-    setupMasterSelection();
+  function renderServiceSelect() {
+    serviceSelect.innerHTML = '<option value="">Выберите услугу</option>';
+
+    services.forEach((service) => {
+      const option = document.createElement("option");
+      option.value = service.id;
+      option.textContent = `${service.name} (${service.price} руб.)`;
+      serviceSelect.appendChild(option);
+    });
   }
 
   // Функции работы с UI
-  function setupMasterSelection() {
-    document.querySelectorAll(".master-card").forEach((card) => {
-      card.addEventListener("click", function () {
-        selectMaster(this);
-      });
-    });
-  }
-
-  function selectMaster(card) {
-    document.querySelectorAll(".master-card").forEach((c) => {
-      c.classList.remove("selected");
-    });
-
-    card.classList.add("selected");
-    selectedMasterId = card.dataset.masterId;
-
-    // Получаем имя мастера из карточки
-    const masterName = card.querySelector("h3").textContent;
-    document.getElementById("master-name").textContent = masterName;
-
-    // Показываем секцию записи
-    document.getElementById("master-booking-section").style.display = "block";
-
-    // Прокручиваем к секции записи
-    document
-      .getElementById("master-booking-section")
-      .scrollIntoView({ behavior: "smooth" });
-
-    loadAvailableSlots(formatDate(selectedDate));
-  }
-
   function openBookingModal(slotId, slotTime) {
     selectedSlotIdInput.value = slotId;
     selectedTimeDisplay.textContent = `Выбранное время: ${slotTime}`;
@@ -289,6 +298,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
 
+    if (!formData.service_id) {
+      showAlert("Пожалуйста, выберите услугу", "error");
+      return false;
+    }
+
     return true;
   }
 
@@ -311,6 +325,28 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
+    categorySelect.addEventListener("change", (e) => {
+      const categoryId = e.target.value;
+      if (categoryId) {
+        loadMasters(categoryId);
+        loadServices(categoryId);
+        document.getElementById("master-booking-section").style.display =
+          "none";
+      }
+    });
+
+    mastersContainer.addEventListener("change", (e) => {
+      selectedMasterId = e.target.value;
+      if (selectedMasterId) {
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        document.getElementById("master-name").textContent =
+          selectedOption.text.split(" (")[0];
+        document.getElementById("master-booking-section").style.display =
+          "block";
+        loadAvailableSlots(formatDate(selectedDate));
+      }
+    });
+
     bookingForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -325,6 +361,7 @@ document.addEventListener("DOMContentLoaded", function () {
         phone: document.getElementById("phone").value.trim(),
         email: document.getElementById("email").value.trim(),
         master_id: selectedMasterId,
+        service_id: serviceSelect.value,
       };
 
       if (!validateForm(formData)) return;
@@ -338,7 +375,6 @@ document.addEventListener("DOMContentLoaded", function () {
           body: JSON.stringify(formData),
         });
 
-        // Проверяем, что ответ действительно JSON
         const text = await response.text();
         let data;
         try {
@@ -368,7 +404,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Инициализация приложения
   async function init() {
     renderWeekDays();
-    await loadMasters();
+    await loadCategories();
     setupEventListeners();
   }
 
